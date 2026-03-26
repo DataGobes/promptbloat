@@ -7,13 +7,20 @@ export function computeBloatScore(totalTokens: number, issues: Issue[]): number 
   const totalWasted = issues.reduce((sum, i) => sum + i.tokensWasted, 0);
   const wasteRatio = totalWasted / totalTokens;
 
+  // Waste ratio drives the bulk of the score (0-60)
+  const wasteScore = Math.min(wasteRatio * 120, 60);
+
+  // Severity penalty (0-25)
   const severityPenalty = issues.reduce((sum, i) => {
-    if (i.severity === "CRITICAL") return sum + 10;
-    if (i.severity === "WARNING") return sum + 5;
+    if (i.severity === "CRITICAL") return sum + 8;
+    if (i.severity === "WARNING") return sum + 4;
     return sum + 2;
   }, 0);
 
-  const raw = wasteRatio * 70 + Math.min(severityPenalty, 30);
+  // Issue count penalty — many issues = bad prompt (0-15)
+  const countPenalty = Math.min(issues.length * 2.5, 15);
+
+  const raw = wasteScore + Math.min(severityPenalty, 25) + countPenalty;
   return Math.min(100, Math.round(raw));
 }
 
