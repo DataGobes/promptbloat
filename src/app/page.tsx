@@ -83,6 +83,19 @@ export default function Home() {
         </div>
       )}
       {deepResult && <DeepAnalysis {...deepResult} />}
+
+      {/* Footer */}
+      <div className="px-4 md:px-8 py-6 mt-8 border-t border-[#222] flex justify-between items-center text-xs text-gray-600">
+        <span>
+          Built by{" "}
+          <a href="https://github.com/DataGobes" target="_blank" rel="noopener noreferrer" className="text-[#ff6b35] hover:underline">
+            @DataGobes
+          </a>
+        </span>
+        <a href="https://github.com/DataGobes/promptbloat" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-300 transition-colors">
+          GitHub
+        </a>
+      </div>
     </main>
   );
 }

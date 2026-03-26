@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PromptBloat
 
-## Getting Started
+**Your prompts are fat. We'll prove it.**
 
-First, run the development server:
+Paste your LLM prompt, get a brutally honest efficiency analysis. Find out how many tokens you're wasting and how much it's costing you.
+
+**[Try it live at promptbloat.vercel.app](https://promptbloat.vercel.app)**
+
+## What it does
+
+- **Bloat Score** (0-100) with letter grade and snarky headline
+- **6 heuristic detectors** — redundancy, filler phrases, over-specification, context stuffing, few-shot bloat, token-heavy patterns
+- **Token distribution heatmap** — see where your token budget actually goes
+- **Cost calculator** — per-call and monthly cost estimates across GPT-5, Claude Sonnet 4.6, Gemini 2.5 Flash, and more
+- **Deep Analysis** (optional) — LLM-powered semantic analysis with before/after rewrite suggestions
+- **LinkedIn sharing** — share your bloat score with a pre-filled post
+
+## Privacy
+
+All heuristic analysis runs **100% client-side**. Your prompts never leave your browser. Deep Analysis mode is opt-in and sends the prompt to an API for LLM analysis.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For Deep Analysis, create a `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+MINIMAX_API_KEY=your-key-here
+```
 
-## Learn More
+## Running tests
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm test
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Next.js (App Router), React 19, TypeScript
+- js-tiktoken for client-side tokenization
+- Tailwind CSS
+- MiniMax API for deep analysis
+- Deployed on Vercel
 
-## Deploy on Vercel
+## Author
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by [@DataGobes](https://github.com/DataGobes)
