@@ -107,7 +107,7 @@ Be specific with before/after — show exact text. Be witty but helpful in expla
 Return ONLY valid JSON, no markdown fences.`;
 
   const completion = await getClient().chat.completions.create({
-    model: "MiniMax-M2.1",
+    model: "MiniMax-M2.7",
     max_tokens: 2000,
     messages: [
       { role: "system", content: systemPrompt },
