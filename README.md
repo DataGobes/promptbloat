@@ -4,7 +4,7 @@
 
 Paste your LLM prompt, get a brutally honest efficiency analysis. Find out how many tokens you're wasting and how much it's costing you.
 
-**[Try it live at promptbloat.vercel.app](https://promptbloat.vercel.app)**
+**[Try it live at promptbloat.vercel.app](https://www.promptbloat.com)**
 
 ## What it does
 
