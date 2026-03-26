@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --accent: #ff6b35;
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #222222;
+  --critical: #ff4444;
+  --warning: #fbbf24;
+  --info: #60a5fa;
+}
+
+body {
+  background: var(--bg);
+}
+
+::selection {
+  background: rgba(255, 107, 53, 0.3);
+}
