@@ -1,6 +1,7 @@
 "use client";
 
 import type { AnalysisResult } from "@/lib/detectors/types";
+import { LinkedInIcon, XIcon } from "./icons";
 
 interface ShareBarProps {
   result: AnalysisResult;
@@ -13,6 +14,7 @@ export function ShareBar({ result }: ShareBarProps) {
     : `${result.totalTokens} tokens analyzed.`;
 
   const shareText = `My system prompt scored a ${result.letterGrade} on PromptBloat. ${stat} How bloated is yours?`;
+  const shareUrl = "https://www.promptbloat.com";
 
   function copyToClipboard() {
     const summary = [
@@ -28,7 +30,12 @@ export function ShareBar({ result }: ShareBarProps) {
   }
 
   function shareOnLinkedIn() {
-    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://promptbloat.com")}&summary=${encodeURIComponent(shareText)}`;
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "width=600,height=400");
+  }
+
+  function shareOnX() {
+    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(url, "_blank", "width=600,height=400");
   }
 
@@ -40,13 +47,21 @@ export function ShareBar({ result }: ShareBarProps) {
           onClick={copyToClipboard}
           className="bg-[#222] text-gray-200 px-4 py-1.5 rounded text-sm hover:bg-[#333] transition-colors"
         >
-          Copy Summary
+          Copy
         </button>
         <button
           onClick={shareOnLinkedIn}
-          className="bg-[#0077b5] text-white px-4 py-1.5 rounded text-sm hover:bg-[#0088cc] transition-colors"
+          className="bg-[#0077b5] text-white px-3 py-1.5 rounded text-sm hover:bg-[#0088cc] transition-colors flex items-center gap-1.5"
         >
-          Share on LinkedIn
+          <LinkedInIcon className="w-4 h-4" />
+          LinkedIn
+        </button>
+        <button
+          onClick={shareOnX}
+          className="bg-white text-black px-3 py-1.5 rounded text-sm hover:bg-gray-200 transition-colors flex items-center gap-1.5"
+        >
+          <XIcon className="w-3.5 h-3.5" />
+          Post
         </button>
       </div>
     </div>

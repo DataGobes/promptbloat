@@ -6,6 +6,7 @@ import { ResultsPanel } from "@/components/results-panel";
 import { DeepAnalysis } from "@/components/deep-analysis";
 import type { AnalysisResult } from "@/lib/detectors/types";
 import { analyzePrompt } from "@/lib/analyzer";
+import { GitHubIcon } from "@/components/icons";
 
 interface DeepResult {
   suggestions: {
@@ -93,7 +94,7 @@ export default function Home() {
           </a>
         </span>
         <a href="https://github.com/DataGobes/promptbloat" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-300 transition-colors">
-          GitHub
+          <GitHubIcon className="w-5 h-5" />
         </a>
       </div>
     </main>
