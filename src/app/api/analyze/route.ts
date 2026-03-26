@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.MINIMAX_API_KEY,
-  baseURL: "https://api.minimax.io/v1",
-});
+function getClient() {
+  return new OpenAI({
+    apiKey: process.env.MINIMAX_API_KEY ?? "",
+    baseURL: "https://api.minimax.io/v1",
+  });
+}
 
 export async function POST(req: NextRequest) {
   const { prompt } = await req.json();
+
+  if (!process.env.MINIMAX_API_KEY) {
+    return NextResponse.json({ error: "Deep analysis not configured" }, { status: 503 });
+  }
 
   if (!prompt || typeof prompt !== "string") {
     return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
@@ -43,7 +49,7 @@ Focus on:
 Be specific with before/after — show exact text. Be witty but helpful in explanations.
 Return ONLY valid JSON, no markdown fences.`;
 
-  const completion = await client.chat.completions.create({
+  const completion = await getClient().chat.completions.create({
     model: "MiniMax-M2.1",
     max_tokens: 2000,
     messages: [
