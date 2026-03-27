@@ -22,7 +22,24 @@ const LIMITS = {
 };
 
 function getIP(req: NextRequest): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  return (
+    req.headers.get("x-real-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown"
+  );
+}
+
+function pruneStaleEntries(now: number) {
+  for (const [ip, hits] of ipMinute) {
+    const fresh = hits.filter((t) => now - t < 60_000);
+    if (fresh.length === 0) ipMinute.delete(ip);
+    else ipMinute.set(ip, fresh);
+  }
+  for (const [ip, hits] of ipHour) {
+    const fresh = hits.filter((t) => now - t < 3_600_000);
+    if (fresh.length === 0) ipHour.delete(ip);
+    else ipHour.set(ip, fresh);
+  }
 }
 
 function checkRateLimit(ip: string): string | null {
@@ -32,6 +49,7 @@ function checkRateLimit(ip: string): string | null {
   if (now > dailyResetAt) {
     dailyCount = 0;
     dailyResetAt = now + 86_400_000;
+    pruneStaleEntries(now);
   }
 
   if (dailyCount >= LIMITS.perDay) {
@@ -61,7 +79,12 @@ function checkRateLimit(ip: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
-  const { prompt } = await req.json();
+  let prompt: unknown;
+  try {
+    ({ prompt } = await req.json());
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
   if (!process.env.MINIMAX_API_KEY) {
     return NextResponse.json({ error: "Deep analysis not configured" }, { status: 503 });
@@ -131,8 +154,24 @@ Return ONLY valid JSON, no markdown fences.`;
 
   try {
     const parsed = JSON.parse(text);
-    return NextResponse.json(parsed);
+
+    // Validate expected shape before forwarding to client
+    if (!parsed.suggestions || !Array.isArray(parsed.suggestions)) {
+      return NextResponse.json({ error: "Failed to parse analysis" }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      suggestions: parsed.suggestions.map((s: Record<string, unknown>) => ({
+        title: String(s.title ?? ""),
+        before: String(s.before ?? ""),
+        after: String(s.after ?? ""),
+        tokensSaved: Number(s.tokensSaved ?? 0),
+        explanation: String(s.explanation ?? ""),
+      })),
+      totalTokensSaveable: Number(parsed.totalTokensSaveable ?? 0),
+      summary: String(parsed.summary ?? ""),
+    });
   } catch {
-    return NextResponse.json({ error: "Failed to parse analysis", raw: text }, { status: 500 });
+    return NextResponse.json({ error: "Failed to parse analysis" }, { status: 500 });
   }
 }
