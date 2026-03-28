@@ -49,25 +49,24 @@ export default function Home() {
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      if (!data.error) {
-        const totalTokens = countTokens(prompt);
-        setResult({
-          totalTokens,
-          bloatScore: data.bloatScore,
-          letterGrade: data.letterGrade,
-          headline: data.headline,
-          issues: data.issues as Issue[],
-          sections: [],
-          costs: calculateCosts(totalTokens),
-        });
-        setDeepResult(data as DeepResult);
+      if (data.error || !res.ok) {
+        throw new Error(data.error || "API request failed");
       }
+      const totalTokens = countTokens(prompt);
+      setResult({
+        totalTokens,
+        bloatScore: data.bloatScore,
+        letterGrade: data.letterGrade,
+        headline: data.headline,
+        issues: data.issues as Issue[],
+        sections: [],
+        costs: calculateCosts(totalTokens),
+      });
+      setDeepResult(data as DeepResult);
     } catch {
       // Deep analysis failed — fall back to heuristic
-      setIsLoading(true);
       const analysis = analyzePrompt(prompt);
       setResult(analysis);
-      setIsLoading(false);
     }
     setIsDeepLoading(false);
   }
