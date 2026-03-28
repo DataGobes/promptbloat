@@ -62,9 +62,9 @@ export default function Home() {
       <div className="px-4 md:px-8 py-6 border-b border-[#222] flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
         <div>
           <span className="text-2xl font-extrabold text-[#ff6b35]">PromptBloat</span>
-          <span className="text-sm text-gray-600 ml-2">your prompts are fat</span>
+          <span className="text-sm text-gray-400 ml-2">your prompts are fat</span>
         </div>
-        <div className="text-xs text-gray-600">
+        <div className="text-xs text-gray-400">
           100% client-side. Your prompts never leave your browser.
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function Home() {
       {/* Deep Analysis */}
       {isDeepLoading && (
         <div className="p-8 border-t border-[#222]">
-          <div className="text-xs text-gray-500 uppercase tracking-wide animate-pulse">
+          <div className="text-xs text-gray-400 uppercase tracking-wide animate-pulse">
             Running deep analysis with MiniMax...
           </div>
         </div>
@@ -86,14 +86,14 @@ export default function Home() {
       {deepResult && <DeepAnalysis {...deepResult} />}
 
       {/* Footer */}
-      <div className="px-4 md:px-8 py-6 mt-8 border-t border-[#222] flex justify-between items-center text-xs text-gray-600">
+      <div className="px-4 md:px-8 py-6 mt-8 border-t border-[#222] flex justify-between items-center text-xs text-gray-400">
         <span>
           Built by{" "}
           <a href="https://github.com/DataGobes" target="_blank" rel="noopener noreferrer" className="text-[#ff6b35] hover:underline">
             @DataGobes
           </a>
         </span>
-        <a href="https://github.com/DataGobes/promptbloat" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-300 transition-colors">
+        <a href="https://github.com/DataGobes/promptbloat" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors">
           <GitHubIcon className="w-5 h-5" />
         </a>
       </div>

@@ -13,10 +13,10 @@ export function ScoreCard({ result }: ScoreCardProps) {
   return (
     <div className="text-center">
       <div className={`text-7xl font-black ${gradeColor}`}>{result.letterGrade}</div>
-      <div className="text-sm text-gray-500 mt-1">Bloat Score: {result.bloatScore}/100</div>
+      <div className="text-sm text-gray-400 mt-1">Bloat Score: {result.bloatScore}/100</div>
       <div className="text-sm text-[#ff6b35] mt-2 italic">&ldquo;{result.headline}&rdquo;</div>
 
-      <div className="mt-4 text-left text-xs text-gray-500 space-y-1">
+      <div className="mt-4 text-left text-xs text-gray-400 space-y-1">
         <div className="flex justify-between">
           <span>Tokens</span>
           <span className="text-gray-200">{result.totalTokens.toLocaleString()}</span>

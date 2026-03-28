@@ -41,7 +41,7 @@ export function ShareBar({ result }: ShareBarProps) {
 
   return (
     <div className="mx-8 mt-6 p-4 bg-[#111] rounded-md flex justify-between items-center">
-      <div className="text-sm text-gray-500">Share your bloat score — if you dare</div>
+      <div className="text-sm text-gray-400">Share your bloat score — if you dare</div>
       <div className="flex gap-2">
         <button
           onClick={copyToClipboard}

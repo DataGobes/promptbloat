@@ -17,7 +17,7 @@ export function PromptInput({ onAnalyze, isLoading }: PromptInputProps) {
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         placeholder="Paste your prompt here...&#10;&#10;System prompts, user templates, full conversations — anything you send to an LLM."
-        className="w-full min-h-[150px] bg-[#111] border border-[#333] rounded-lg p-4 text-gray-300 font-mono text-sm resize-y focus:outline-none focus:border-[#ff6b35] placeholder-gray-600"
+        className="w-full min-h-[150px] bg-[#111] border border-[#333] rounded-lg p-4 text-gray-300 font-mono text-sm resize-y focus:outline-none focus:border-[#ff6b35] placeholder-gray-500"
       />
       <div className="flex gap-3 mt-3 items-center">
         <button
@@ -27,9 +27,14 @@ export function PromptInput({ onAnalyze, isLoading }: PromptInputProps) {
         >
           {isLoading ? "Analyzing..." : "Analyze"}
         </button>
-        <label className="flex items-center gap-2 text-gray-500 text-sm cursor-pointer">
+        <label className="flex items-center gap-2 text-gray-400 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={deepMode}
+            onChange={(e) => setDeepMode(e.target.checked)}
+            className="sr-only peer"
+          />
           <div
-            onClick={() => setDeepMode(!deepMode)}
             className={`w-8 h-[18px] rounded-full relative transition-colors cursor-pointer ${deepMode ? "bg-[#ff6b35]" : "bg-[#333]"}`}
           >
             <div

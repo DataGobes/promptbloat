@@ -15,7 +15,7 @@ interface DeepAnalysisProps {
 export function DeepAnalysis({ suggestions, totalTokensSaveable, summary }: DeepAnalysisProps) {
   return (
     <div className="p-8 border-t border-[#222]">
-      <div className="text-xs text-gray-500 mb-2 uppercase tracking-wide">
+      <div className="text-xs text-gray-400 mb-2 uppercase tracking-wide">
         Deep Analysis — {totalTokensSaveable} tokens saveable
       </div>
       <p className="text-sm text-gray-400 mb-4 italic">{summary}</p>
@@ -42,7 +42,7 @@ export function DeepAnalysis({ suggestions, totalTokensSaveable, summary }: Deep
             </div>
           </div>
 
-          <p className="text-gray-500 text-xs mt-2 italic">{s.explanation}</p>
+          <p className="text-gray-400 text-xs mt-2 italic">{s.explanation}</p>
         </div>
       ))}
     </div>
