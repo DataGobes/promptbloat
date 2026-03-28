@@ -4,8 +4,10 @@ import { useState } from "react";
 import { PromptInput } from "@/components/prompt-input";
 import { ResultsPanel } from "@/components/results-panel";
 import { DeepAnalysis } from "@/components/deep-analysis";
-import type { AnalysisResult } from "@/lib/detectors/types";
+import type { AnalysisResult, Issue } from "@/lib/detectors/types";
 import { analyzePrompt } from "@/lib/analyzer";
+import { countTokens } from "@/lib/tokenizer";
+import { calculateCosts } from "@/lib/cost-calculator";
 import { GitHubIcon } from "@/components/icons";
 
 interface DeepResult {
@@ -27,33 +29,47 @@ export default function Home() {
   const [isDeepLoading, setIsDeepLoading] = useState(false);
 
   async function handleAnalyze(prompt: string, deep: boolean) {
-    setIsLoading(true);
+    setResult(null);
     setDeepResult(null);
-    setIsDeepLoading(false);
 
-    // Run heuristic analysis synchronously (client-side) — shows instantly
-    const analysis = analyzePrompt(prompt);
-    setResult(analysis);
-    setIsLoading(false);
-
-    // Deep analysis runs async in background after heuristic results are shown
-    if (deep) {
-      setIsDeepLoading(true);
-      try {
-        const res = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt }),
-        });
-        const data = await res.json();
-        if (!data.error) {
-          setDeepResult(data as DeepResult);
-        }
-      } catch {
-        // deep analysis failed silently
-      }
-      setIsDeepLoading(false);
+    if (!deep) {
+      setIsLoading(true);
+      const analysis = analyzePrompt(prompt);
+      setResult(analysis);
+      setIsLoading(false);
+      return;
     }
+
+    // Deep mode: LLM drives the entire analysis
+    setIsDeepLoading(true);
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+      const data = await res.json();
+      if (!data.error) {
+        const totalTokens = countTokens(prompt);
+        setResult({
+          totalTokens,
+          bloatScore: data.bloatScore,
+          letterGrade: data.letterGrade,
+          headline: data.headline,
+          issues: data.issues as Issue[],
+          sections: [],
+          costs: calculateCosts(totalTokens),
+        });
+        setDeepResult(data as DeepResult);
+      }
+    } catch {
+      // Deep analysis failed — fall back to heuristic
+      setIsLoading(true);
+      const analysis = analyzePrompt(prompt);
+      setResult(analysis);
+      setIsLoading(false);
+    }
+    setIsDeepLoading(false);
   }
 
   return (
@@ -65,24 +81,26 @@ export default function Home() {
           <span className="text-sm text-gray-400 ml-2">your prompts are fat</span>
         </div>
         <div className="text-xs text-gray-400">
-          100% client-side. Your prompts never leave your browser.
+          Client-side by default. Deep analysis sends your prompt to MiniMax.
         </div>
       </div>
 
       {/* Input */}
-      <PromptInput onAnalyze={handleAnalyze} isLoading={isLoading} />
+      <PromptInput onAnalyze={handleAnalyze} isLoading={isLoading || isDeepLoading} />
 
-      {/* Results */}
-      {result && result.totalTokens > 0 && <ResultsPanel result={result} />}
-
-      {/* Deep Analysis */}
-      {isDeepLoading && (
+      {/* Loading */}
+      {isDeepLoading && !result && (
         <div className="p-8 border-t border-[#222]">
           <div className="text-xs text-gray-400 uppercase tracking-wide animate-pulse">
             Running deep analysis with MiniMax...
           </div>
         </div>
       )}
+
+      {/* Results */}
+      {result && result.totalTokens > 0 && <ResultsPanel result={result} />}
+
+      {/* Deep Analysis Suggestions */}
       {deepResult && <DeepAnalysis {...deepResult} />}
 
       {/* Footer */}

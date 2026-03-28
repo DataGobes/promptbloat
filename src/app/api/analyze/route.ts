@@ -107,6 +107,17 @@ export async function POST(req: NextRequest) {
 
 Return a JSON object with this exact structure:
 {
+  "bloatScore": <0-100 integer, where 0 is perfectly efficient and 100 is pure waste>,
+  "letterGrade": "<A+|A|B|C|D|F>",
+  "headline": "<One witty sentence summarizing the prompt quality>",
+  "issues": [
+    {
+      "detector": "<kebab-case category like 'semantic-duplication' or 'filler-phrases'>",
+      "severity": "<CRITICAL|WARNING|INFO>",
+      "tokensWasted": <estimated tokens wasted>,
+      "message": "<One sentence describing the specific issue>"
+    }
+  ],
   "suggestions": [
     {
       "title": "Short description of the issue",
@@ -120,13 +131,23 @@ Return a JSON object with this exact structure:
   "summary": "One sentence overall assessment"
 }
 
+Scoring guide:
+- A+ (0-10): Surgically precise, no waste
+- A (11-20): Clean, minimal bloat
+- B (21-35): Decent but has trimmable fat
+- C (36-55): Average, noticeably bloated
+- D (56-75): Needs serious trimming
+- F (76-100): Overwhelmingly wasteful
+
 Focus on:
 1. Semantic duplication — paragraphs saying the same thing differently
 2. Instructions unlikely to change model behavior
 3. Verbose phrasings that can be compressed
 4. Unnecessary context or examples
+5. Filler words and hedge phrases
+6. Over-specified formatting rules
 
-Be specific with before/after — show exact text. Be witty but helpful in explanations.
+Be specific with before/after — show exact text. Be witty but helpful.
 Return ONLY valid JSON, no markdown fences.`;
 
   const completion = await getClient().chat.completions.create({
@@ -161,6 +182,21 @@ Return ONLY valid JSON, no markdown fences.`;
     }
 
     return NextResponse.json({
+      bloatScore: Math.min(100, Math.max(0, Number(parsed.bloatScore ?? 50))),
+      letterGrade: String(parsed.letterGrade ?? "C"),
+      headline: String(parsed.headline ?? ""),
+      issues: Array.isArray(parsed.issues)
+        ? parsed.issues.map((i: Record<string, unknown>) => ({
+            detector: String(i.detector ?? "general"),
+            severity: ["CRITICAL", "WARNING", "INFO"].includes(String(i.severity))
+              ? String(i.severity)
+              : "WARNING",
+            tokensWasted: Number(i.tokensWasted ?? 0),
+            message: String(i.message ?? ""),
+            lineStart: 0,
+            lineEnd: 0,
+          }))
+        : [],
       suggestions: parsed.suggestions.map((s: Record<string, unknown>) => ({
         title: String(s.title ?? ""),
         before: String(s.before ?? ""),

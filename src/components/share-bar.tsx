@@ -14,7 +14,8 @@ export function ShareBar({ result }: ShareBarProps) {
     : `${result.totalTokens} tokens analyzed.`;
 
   const shareText = `My system prompt scored a ${result.letterGrade} on PromptBloat. ${stat} How bloated is yours?`;
-  const shareUrl = "https://www.promptbloat.com";
+  const shareData = `${result.letterGrade}-${result.bloatScore}-${result.totalTokens}-${result.issues.length}`;
+  const shareUrl = `https://www.promptbloat.com/share/${shareData}`;
 
   function copyToClipboard() {
     const summary = [

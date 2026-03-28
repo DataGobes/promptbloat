@@ -41,9 +41,14 @@ export function PromptInput({ onAnalyze, isLoading }: PromptInputProps) {
               className={`w-[14px] h-[14px] bg-white rounded-full absolute top-[2px] transition-all ${deepMode ? "left-[14px]" : "left-[2px]"}`}
             />
           </div>
-          Deep Analysis (uses MiniMax API)
+          Deep Analysis
         </label>
       </div>
+      {!deepMode && (
+        <p className="text-xs text-gray-500 mt-2">
+          Turn on <span className="text-[#ff6b35]">Deep Analysis</span> for LLM-powered scoring and rewrite suggestions. Your prompt will be sent to MiniMax.
+        </p>
+      )}
     </div>
   );
 }
